@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Policy;
@@ -28,6 +29,42 @@ namespace dz2.Model
             connection.Close();
         }
 
+        // асинхронный метод для обновления
+        public async void Update(string name, string color, double cal)
+        {
+            try
+            {
+                // здесь используем свойство Parameters, чтобы избежать попадания
+                // через Update символов, которые могут нанести вред нашей БД
+                connection.Open();
+                string cmdText = @"update FruitsVegs set Color = @pcolor, Calory = @pcal where Name = @pname";
+                SqlCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@pcolor", SqlDbType.NVarChar).Value = color;
+                cmd.Parameters.Add("@pcal", SqlDbType.Real).Value = cal;
+                cmd.Parameters.Add("@pname", SqlDbType.NVarChar).Value = name;
+                cmd.CommandText = cmdText;
+                await cmd.ExecuteNonQueryAsync();
+            }
+            finally { connection.Close(); }
+        }
+
+        // асинхронный метод для удаления
+        public async void Delete(string name)
+        {
+            try
+            {
+                connection.Open();
+                SqlCommand cmd = connection.CreateCommand();
+                cmd.CommandText = $"delete from FruitsVegs where Name = '{name}'";
+                await cmd.ExecuteNonQueryAsync();
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        // отображение всех данных из таблицы
         public List<FruitsVegs> ShowAllInfo()
         {
             List<FruitsVegs> frVegList = new List<FruitsVegs>();

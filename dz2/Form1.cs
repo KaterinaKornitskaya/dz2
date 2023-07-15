@@ -134,5 +134,15 @@ namespace dz2
                     break;
             }
         }
+
+        private async void buttonForUpdate_Click(object sender, EventArgs e)
+        {
+            db.Update(textBoxNameForUpdate.Text, textBoxColorForUpdate.Text, Convert.ToDouble(textBoxCalForUpdate.Text));
+        }
+
+        private async void buttonForDelete_Click(object sender, EventArgs e)
+        {
+            db.Delete(textBoxNameForDelete.Text);
+        }
     }
 }
